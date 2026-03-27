@@ -1,6 +1,16 @@
 {
   "version": 1,
   "skills": {
+    "htmx": {
+      "source": "mindrally/skills",
+      "sourceType": "github",
+      "computedHash": "6e1f97a1af33384fe4e9ea60078770bacdacfb48d26a601c2bf17c61447c8532"
+    },
+    "kotlin-patterns": {
+      "source": "affaan-m/everything-claude-code",
+      "sourceType": "github",
+      "computedHash": "d69f7c8966582d10cd0e3b93cff4dec073872068785376ad835d4f2c87b0561c"
+    },
     "kotlin-springboot": {
       "source": "github/awesome-copilot",
       "sourceType": "github",
