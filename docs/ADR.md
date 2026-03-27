@@ -32,7 +32,7 @@ Credentials are stored in [`.env`](../.env) (OpenRouter API key and base URL).
 | UI interactivity | HTMX 2.x + vanilla JS | Form submission, SSE chat streaming, file preview — no build step required |
 | Persistence | SQLite via Spring JDBC | Zero-setup embedded database; sufficient for single-node MVP session history |
 | Schema migrations | Flyway | Versioned migrations (`V1__init.sql`); safe schema evolution without manual SQL |
-| Build | Gradle 8.x (Kotlin DSL) | Consistent with Kotlin ecosystem; typed build scripts |
+| Build | Gradle 8.x (Kotlin DSL) via Gradle wrapper (`./gradlew`) | Consistent with Kotlin ecosystem; typed build scripts; wrapper ensures reproducible builds without a local Gradle installation |
 
 ---
 

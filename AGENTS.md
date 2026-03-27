@@ -15,7 +15,7 @@ Advisory AI chat for Sinsay customers to submit a complaint (Reklamacja) or retu
 | AI | Spring AI → OpenRouter (`openai/gpt-5.4-mini`) via OpenAI-compatible client |
 | UI | kotlinx.html DSL + HTMX 2 + vanilla JS (no frontend build step) |
 | Persistence | SQLite via Spring JDBC + Flyway migrations |
-| Build | Gradle 8 (Kotlin DSL) |
+| Build | Gradle 8 (Kotlin DSL) via Gradle wrapper (`./gradlew`) |
 
 ## Architecture
 
