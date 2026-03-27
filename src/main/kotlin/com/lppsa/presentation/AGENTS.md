@@ -8,6 +8,7 @@ HTTP entry points and HTML rendering. Depends on `application` (use cases) and `
 |---|---|
 | `web/` | `IntakeController` — `POST /submit`; `ChatController` — `POST /chat/{id}` |
 | `html/` | `Layout`, `IntakePage`, `DecisionPanel` — kotlinx.html DSL renderers |
+| `html/components/` | Reusable DSL components: `Buttons`, `FormFields`, `ChatBubble`, `DecisionBadge`, … |
 
 ---
 
@@ -45,20 +46,196 @@ fun submit(@ModelAttribute cmd: SubmitCommand): Flow<String> =
 ## HTML rendering rules (`html/`)
 
 ### kotlinx.html DSL
+
 - All HTML is generated via the kotlinx.html Kotlin DSL — no template files, no string concatenation.
 - Every page must go through `Layout.kt` for consistent shell (head, meta, HTMX script inclusion).
 - `DecisionPanel.kt` renders both ACCEPT and REJECT states; it receives a `Decision` domain object, not raw strings.
 
-### HTMX patterns
-- Use `hx-ext="sse"` + `sse-connect` for streaming decision and chat responses.
-- SSE swap target (`sse-swap`) must be a named event matching what the server emits.
-- Submit button must be disabled via `disabled` attribute when mandatory fields are missing — enforced with vanilla JS in `upload-preview.js`, not server-side re-rendering.
-- Image upload: validate MIME type and size client-side in `upload-preview.js` before enabling the submit button (AC-02, AC-03). Server must still validate (defence in depth).
+#### Custom attributes
 
-### Chat UI
-- Chat input is revealed **automatically** after the decision panel renders — no user action required (AC-17).
-- Chat messages sent via `POST /chat/{sessionId}` using HTMX `hx-post`.
-- Off-topic redirect messages from the agent are rendered identically to normal assistant messages — no special UI treatment needed.
+Use `attributes["name"] = "value"` to set any attribute not covered by a typed DSL property:
+
+```kotlin
+div {
+    attributes["id"] = "chat-box"
+    attributes["aria-live"] = "polite"
+}
+```
+
+Never use string concatenation to build HTML — always stay inside the DSL.
+
+#### Components — extract to `html/components/`
+
+Extract any reusable fragment (≥ 2 use sites, or non-trivial structure) to its own file under
+`html/components/`. Components are Kotlin extension functions on the appropriate receiver type:
+
+```kotlin
+// html/components/Buttons.kt
+fun FlowContent.primaryButton(label: String, classes: String = "") {
+    button(classes = "btn btn--primary $classes".trim()) {
+        type = ButtonType.submit
+        +label
+    }
+}
+
+// html/components/FormFields.kt
+fun FlowContent.labeledInput(
+    id: String,
+    labelText: String,
+    inputName: String,
+    placeholder: String = "",
+) {
+    div(classes = "form-field") {
+        label {
+            htmlFor = id
+            +labelText
+        }
+        input(classes = "form-field__input") {
+            this.id = id
+            name = inputName
+            this.placeholder = placeholder
+        }
+    }
+}
+```
+
+Naming rules:
+- File name = component group, e.g. `Buttons.kt`, `FormFields.kt`, `ChatBubble.kt`, `StatusBadge.kt`.
+- Function name = what it renders, in camelCase.
+- Receiver type = narrowest applicable: `FlowContent` for generic content, `UL` for list items, etc.
+
+#### Page-level structure
+
+Page renderers (`IntakePage.kt`, `DecisionPanel.kt`, …) call component functions — they must not
+contain raw `div`/`span` nesting that belongs in a component. Keep page files thin orchestrators.
+
+---
+
+### HTMX helper extensions
+
+All HTMX attributes are set via the `Htmx` helper object defined in `html/components/Htmx.kt`.
+**Never scatter raw `attributes["hx-*"]` calls across page renderers** — use the helpers instead.
+
+```kotlin
+// html/components/Htmx.kt
+import kotlinx.html.CommonAttributeGroupFacade
+
+/** Fluent HTMX attribute helpers for kotlinx.html tags. */
+object Htmx {
+    fun CommonAttributeGroupFacade.hxPost(url: String) { attributes["hx-post"] = url }
+    fun CommonAttributeGroupFacade.hxGet(url: String) { attributes["hx-get"] = url }
+    fun CommonAttributeGroupFacade.hxTarget(selector: String) { attributes["hx-target"] = selector }
+    fun CommonAttributeGroupFacade.hxSwap(strategy: String) { attributes["hx-swap"] = strategy }
+    fun CommonAttributeGroupFacade.hxTrigger(trigger: String) { attributes["hx-trigger"] = trigger }
+    fun CommonAttributeGroupFacade.hxIndicator(selector: String) { attributes["hx-indicator"] = selector }
+    fun CommonAttributeGroupFacade.hxDisabledElt(selector: String) { attributes["hx-disabled-elt"] = selector }
+    fun CommonAttributeGroupFacade.hxEncoding(encoding: String) { attributes["hx-encoding"] = encoding }
+    fun CommonAttributeGroupFacade.hxExt(vararg extensions: String) { attributes["hx-ext"] = extensions.joinToString(",") }
+    fun CommonAttributeGroupFacade.sseConnect(url: String) { attributes["sse-connect"] = url }
+    fun CommonAttributeGroupFacade.sseSwap(eventName: String) { attributes["sse-swap"] = eventName }
+}
+```
+
+Import with `import com.lppsa.presentation.html.components.Htmx.hxPost` (etc.) and call directly on any tag:
+
+```kotlin
+import com.lppsa.presentation.html.components.Htmx.hxPost
+import com.lppsa.presentation.html.components.Htmx.hxTarget
+import com.lppsa.presentation.html.components.Htmx.hxSwap
+
+form(classes = "intake-form") {
+    hxPost("/submit")
+    hxTarget("#decision-panel")
+    hxSwap("innerHTML")
+    hxEncoding("multipart/form-data")
+    hxIndicator("#loading-spinner")
+    // ...
+}
+```
+
+---
+
+### HTMX patterns
+
+#### Multipart form submission (intake form)
+
+```kotlin
+form(classes = "intake-form") {
+    hxPost("/submit")
+    hxTarget("#decision-panel")
+    hxSwap("innerHTML")
+    hxEncoding("multipart/form-data")   // required for file upload
+    hxIndicator("#spinner")
+    hxDisabledElt("find button[type=submit]")
+    // form fields …
+    primaryButton("Wyślij")
+}
+div { id = "decision-panel" }
+div(classes = "htmx-indicator") { id = "spinner" }
+```
+
+#### SSE streaming (decision + chat)
+
+```kotlin
+// Decision panel — connect to SSE stream, swap content on "decision" event
+div(classes = "decision-stream") {
+    hxExt("sse")
+    sseConnect("/submit-stream/$sessionId")
+    div(classes = "decision-content") {
+        sseSwap("decision")         // server emits: event: decision\ndata: <html fragment>
+    }
+}
+
+// Chat response area — swap on "chat" event
+div(classes = "chat-stream") {
+    hxExt("sse")
+    sseConnect("/chat/$sessionId")
+    div(classes = "chat-messages") {
+        id = "chat-messages"
+        sseSwap("chat")             // server emits: event: chat\ndata: <html fragment>
+    }
+}
+```
+
+#### Chat message submission
+
+```kotlin
+form(classes = "chat-form") {
+    hxPost("/chat/$sessionId")
+    hxTarget("#chat-messages")
+    hxSwap("beforeend")             // append new messages at the bottom
+    hxTrigger("submit")
+    hxDisabledElt("find button[type=submit]")
+    input(classes = "chat-form__input") {
+        name = "message"
+        placeholder = "Zadaj pytanie…"
+        required = true
+    }
+    primaryButton("Wyślij")
+}
+```
+
+#### Submit button — client-side gate
+
+- The submit button starts `disabled`; `upload-preview.js` enables it only after all required fields
+  (including a valid image) are filled. This is client-side UX only — server validates independently.
+- Use `hx-disabled-elt="find button[type=submit]"` to keep it disabled during the HTMX request.
+
+#### Chat UI reveal
+
+- Chat input area is hidden (`display: none`) until the decision SSE stream completes.
+- `upload-preview.js` (or an `htmx:sseMessage` listener) removes the hidden class — no extra round-trip needed (AC-17).
+
+#### SSE event naming
+
+Server emits named events; the `sseSwap` value must match exactly:
+
+| SSE event name | Rendered fragment |
+|---|---|
+| `decision` | Full `DecisionPanel` HTML |
+| `chat` | Single `ChatBubble` HTML |
+
+---
 
 ### No inline scripts or styles
 - Do not add `<script>` blocks inline in kotlinx.html renderers. Put JS in `src/main/resources/static/js/`.
