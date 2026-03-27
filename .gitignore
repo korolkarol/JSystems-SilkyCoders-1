@@ -43,3 +43,6 @@ frontend/dist
 
 ## Gradle ##
 .gradle
+
+## Playwright ##
+.playwright-cli

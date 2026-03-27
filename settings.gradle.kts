@@ -1,1 +1,1 @@
-rootProject.name = "lppsa"
+rootProject.name = "sinsay-ai-refund-assistant"
