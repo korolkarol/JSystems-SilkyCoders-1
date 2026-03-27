@@ -36,3 +36,7 @@ build/
 node_modules/
 .vite
 frontend/dist
+
+### Project ###
+*.db
+.env
