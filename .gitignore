@@ -40,3 +40,6 @@ frontend/dist
 ### Project ###
 *.db
 .env
+
+## Gradle ##
+.gradle
