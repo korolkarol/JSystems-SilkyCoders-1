@@ -29,6 +29,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("org.springframework.ai:spring-ai-starter-model-openai")
+	implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.11.0")
 	runtimeOnly("org.xerial:sqlite-jdbc:3.47.1.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")

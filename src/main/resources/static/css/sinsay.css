@@ -1,0 +1,390 @@
+/* Sinsay Design Tokens — sourced from docs/BRANDING.md */
+:root {
+    /* Primary — Amber */
+    --color-primary-10: #FFF2E5;
+    --color-primary-20: #FFDFBF;
+    --color-primary-30: #F2C291;
+    --color-primary-40: #F2B06D;
+    --color-primary-50: #E09243;
+    --color-primary-60: #B2671B;
+    --color-primary-70: #804306;
+    --color-primary-80: #4D2600;
+    --color-primary-90: #1A0D00;
+
+    /* Dark / Neutral */
+    --color-dark-100: #000000;
+    --color-dark-90:  #18191A;
+    --color-dark-80:  #303133;
+    --color-dark-70:  #494A4D;
+    --color-dark-60:  #616366;
+    --color-dark-50:  #7B7D80;
+    --color-dark-40:  #949699;
+    --color-dark-30:  #AFB0B2;
+    --color-dark-20:  #C8C9CC;
+    --color-dark-10:  #E3E4E5;
+    --color-dark-5:   #F1F2F4;
+    --color-white-100: #FFFFFF;
+
+    /* Semantic */
+    --color-red-50:    #FF0023;
+    --color-green-50:  #0DB209;
+    --color-blue-50:   #2E90E5;
+    --color-orange-50: #FF9900;
+
+    /* Alpha */
+    --color-dark-alpha-50: rgba(0, 0, 0, 0.5);
+    --color-dark-alpha-20: rgba(0, 0, 0, 0.2);
+    --color-white-alpha-80: rgba(255, 255, 255, 0.8);
+
+    /* Spacing */
+    --size-s:   4px;
+    --size-sm:  8px;
+    --size-m:   16px;
+    --size-l:   32px;
+    --size-xl:  64px;
+    --size-xxl: 128px;
+
+    /* Elevation */
+    --elevation-01: 0px 2px 12px rgba(24, 25, 26, 0.08), 0px 1px 2px rgba(26, 13, 0, 0.08);
+    --elevation-02: 0px 4px 16px rgba(24, 25, 26, 0.10), 0px 1px 4px rgba(26, 13, 0, 0.10);
+    --elevation-03: 0px 6px 24px rgba(24, 25, 26, 0.12), 0px 1px 6px rgba(26, 13, 0, 0.10);
+    --elevation-04: 0px 8px 40px rgba(24, 25, 26, 0.14), 0px 2px 12px rgba(26, 13, 0, 0.12);
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Base ── */
+body {
+    font-family: Euclid, Arial, Helvetica, "Helvetica Neue", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--color-dark-80);
+    background-color: var(--color-white-100);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ── */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--size-l);
+    height: 56px;
+    background-color: var(--color-white-100);
+    border-bottom: 1px solid var(--color-dark-10);
+    box-shadow: var(--elevation-01);
+}
+
+.site-header__logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.site-header__logo img {
+    height: 24px;
+    width: auto;
+}
+
+.badge-wip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--size-s);
+    padding: 4px 12px;
+    background-color: var(--color-primary-10);
+    border: 1px solid var(--color-primary-50);
+    color: var(--color-primary-60);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* ── Hero ── */
+.hero {
+    background-color: var(--color-dark-90);
+    color: var(--color-white-100);
+    padding: var(--size-xxl) var(--size-l);
+    text-align: center;
+}
+
+.hero__eyebrow {
+    display: inline-block;
+    margin-bottom: var(--size-m);
+    padding: 6px 16px;
+    background-color: var(--color-primary-50);
+    color: var(--color-white-100);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.hero__title {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    margin-bottom: var(--size-m);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero__title span {
+    color: var(--color-primary-40);
+}
+
+.hero__description {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--color-dark-30);
+    max-width: 580px;
+    margin: 0 auto var(--size-l);
+}
+
+.hero__cta-group {
+    display: flex;
+    gap: var(--size-m);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ── Buttons ── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: "Euclid Circular B", Oxygen, Ubuntu, sans-serif;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 2px solid transparent;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+    letter-spacing: 0.04em;
+}
+
+.btn--primary {
+    background-color: var(--color-primary-50);
+    color: var(--color-white-100);
+    border-color: var(--color-primary-50);
+}
+
+.btn--primary:hover {
+    background-color: var(--color-primary-40);
+    border-color: var(--color-primary-40);
+}
+
+.btn--outline {
+    background-color: transparent;
+    color: var(--color-white-100);
+    border-color: var(--color-white-alpha-80);
+}
+
+.btn--outline:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.btn--disabled {
+    background-color: var(--color-dark-10);
+    color: var(--color-dark-40);
+    border-color: var(--color-dark-10);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ── Section ── */
+.section {
+    padding: var(--size-xl) var(--size-l);
+}
+
+.section--alt {
+    background-color: var(--color-dark-5);
+}
+
+.section__inner {
+    max-width: 1008px;
+    margin: 0 auto;
+}
+
+.section__heading {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-dark-90);
+    margin-bottom: var(--size-sm);
+    letter-spacing: -0.2px;
+}
+
+.section__subheading {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--color-dark-60);
+    margin-bottom: var(--size-l);
+    line-height: 1.6;
+}
+
+/* ── Feature cards ── */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--size-m);
+    margin-top: var(--size-l);
+}
+
+.feature-card {
+    background-color: var(--color-white-100);
+    padding: var(--size-l);
+    box-shadow: var(--elevation-01);
+    border-top: 3px solid var(--color-primary-50);
+}
+
+.feature-card__icon {
+    width: 40px;
+    height: 40px;
+    background-color: var(--color-primary-10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--size-m);
+    font-size: 20px;
+}
+
+.feature-card__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-dark-90);
+    margin-bottom: var(--size-sm);
+    letter-spacing: 0.15px;
+}
+
+.feature-card__text {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--color-dark-60);
+    line-height: 1.6;
+}
+
+/* ── Status banner ── */
+.status-banner {
+    background-color: var(--color-primary-10);
+    border-left: 4px solid var(--color-primary-50);
+    padding: var(--size-m) var(--size-l);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--size-m);
+}
+
+.status-banner__icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.status-banner__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-primary-70);
+    margin-bottom: var(--size-s);
+}
+
+.status-banner__text {
+    font-size: 14px;
+    color: var(--color-dark-70);
+    line-height: 1.6;
+}
+
+/* ── Roadmap ── */
+.roadmap-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-sm);
+    margin-top: var(--size-m);
+}
+
+.roadmap-item {
+    display: flex;
+    align-items: baseline;
+    gap: var(--size-m);
+    padding: var(--size-m);
+    background-color: var(--color-white-100);
+    box-shadow: var(--elevation-01);
+}
+
+.roadmap-item__status {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.roadmap-item__status--done {
+    background-color: var(--color-green-50);
+    color: var(--color-white-100);
+}
+
+.roadmap-item__status--progress {
+    background-color: var(--color-primary-50);
+    color: var(--color-white-100);
+}
+
+.roadmap-item__status--planned {
+    background-color: var(--color-dark-10);
+    color: var(--color-dark-50);
+}
+
+.roadmap-item__label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-dark-80);
+}
+
+.roadmap-item__label--planned {
+    color: var(--color-dark-50);
+}
+
+/* ── Footer ── */
+.site-footer {
+    background-color: var(--color-dark-90);
+    color: var(--color-dark-30);
+    padding: var(--size-l);
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.site-footer a {
+    color: var(--color-primary-40);
+    text-decoration: none;
+}
+
+.site-footer a:hover {
+    text-decoration: underline;
+}
+
+.site-footer__divider {
+    border: none;
+    border-top: 1px solid var(--color-dark-80);
+    margin: var(--size-m) auto;
+    max-width: 400px;
+}
+
+.site-footer__disclaimer {
+    font-size: 12px;
+    color: var(--color-dark-50);
+    margin-top: var(--size-sm);
+}

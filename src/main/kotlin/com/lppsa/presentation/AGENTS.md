@@ -66,6 +66,107 @@ fun submit(@ModelAttribute cmd: SubmitCommand): Flow<String> =
 
 ---
 
+## Sinsay Brand Styling
+
+All UI must follow the Sinsay brand identity documented in `docs/BRANDING.md`. Assets are in `docs/assets/`.
+
+### Colours
+
+Use CSS custom properties matching Sinsay's `design-tokens.css`:
+
+| Purpose | Token | Hex |
+|---------|-------|-----|
+| Primary CTA / active | `--color-primary-50` | `#E09243` |
+| Primary hover | `--color-primary-40` | `#F2B06D` |
+| Body text | `--color-dark-80` | `#303133` |
+| Secondary text | `--color-dark-70` | `#494A4D` |
+| Placeholder | `--color-dark-50` | `#7B7D80` |
+| Border | `--color-dark-30` | `#AFB0B2` |
+| Divider | `--color-dark-20` | `#C8C9CC` |
+| Surface background | `--color-dark-5` | `#F1F2F4` |
+| Error | `--color-red-50` | `#FF0023` |
+| Success | `--color-green-50` | `#0DB209` |
+| White | `--color-white-100` | `#FFFFFF` |
+| Near-black / logo | `--color-dark-90` | `#18191A` |
+
+### Typography
+
+- **Primary font**: `Euclid, Arial, Helvetica, "Helvetica Neue", sans-serif`
+- **Button font**: `"Euclid Circular B", Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif`
+
+| Role | Size | Weight | Notes |
+|------|------|--------|-------|
+| Body | 16px | 400 | Default |
+| Label / nav | 14px | 400 | — |
+| Section heading | 16px | 600 | Letter-spacing 0.15px |
+| Modal heading | 24px | 600 | Line-height 24px, letter-spacing -0.2px |
+| Button | 16px | 600 | Uppercase |
+| Price / meta | 14px | 500 | — |
+
+### Buttons
+
+```css
+/* Primary */
+background-color: #E09243;
+color: #FFFFFF;
+border: 2px solid #E09243;
+border-radius: 0;          /* sharp corners — never rounded */
+padding: 12px 32px;
+font-size: 16px;
+font-weight: 600;
+text-transform: uppercase;
+font-family: "Euclid Circular B", sans-serif;
+
+/* Secondary / outline */
+background-color: transparent;
+color: #FFFFFF;
+border: 2px solid rgba(255,255,255,0.8);
+border-radius: 0;
+padding: 12px 32px;
+```
+
+### Form Inputs
+
+- Inner `<input>` is borderless; border goes on the wrapper element.
+- Wrapper border colour: `#AFB0B2` (`--color-dark-30`).
+- Focus ring colour: `#E09243` (`--color-primary-50`).
+- `border-radius: 0` on all inputs.
+- Error state border/text: `#FF0023` (`--color-red-50`).
+
+### Spacing
+
+Use multiples of the base 16px unit:
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--size-s` | `4px` | Icon gaps |
+| `--size-sm` | `8px` | Label → input gap |
+| `--size-m` | `16px` | Default field gap |
+| `--size-l` | `32px` | Section padding |
+| `--size-xl` | `64px` | Large sections |
+
+### Elevation
+
+| Level | Shadow |
+|-------|--------|
+| Card / panel | `0px 2px 12px rgba(24,25,26,0.08), 0px 1px 2px rgba(26,13,0,0.08)` |
+| Raised panel | `0px 4px 16px rgba(24,25,26,0.10), 0px 1px 4px rgba(26,13,0,0.10)` |
+
+### Polish copy for form elements
+
+| UI element | Label |
+|------------|-------|
+| Submit button | Wyślij |
+| Required field hint | Pole wymagane |
+| Image upload | Dodaj zdjęcie |
+| Request type selector | Rodzaj zgłoszenia |
+| Complaint option | Reklamacja |
+| Return option | Zwrot |
+| Order number | Numer zamówienia |
+| Problem description | Opis problemu |
+
+---
+
 ## Testing
 
 - Controller tests use `@WebFluxTest` with mocked use cases.
