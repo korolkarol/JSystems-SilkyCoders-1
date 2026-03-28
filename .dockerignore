@@ -1,0 +1,11 @@
+.env
+.git
+.gradle
+.idea
+build/
+node_modules/
+e2e/
+docs/
+*.log
+*.md
+*.bat
