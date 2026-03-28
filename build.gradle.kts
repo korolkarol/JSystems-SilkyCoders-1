@@ -21,8 +21,13 @@ repositories {
 extra["springAiVersion"] = "1.1.3"
 
 dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("io.micrometer:micrometer-tracing-bridge-brave")
+	implementation("io.micrometer:micrometer-registry-prometheus")
+	runtimeOnly("io.zipkin.reporter2:zipkin-reporter-brave")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.flywaydb:flyway-core")

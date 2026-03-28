@@ -5,6 +5,7 @@ import com.lppsa.domain.model.MessageRole
 import com.lppsa.domain.port.ChatRepository
 import com.lppsa.domain.port.EvaluationPort
 import com.lppsa.domain.port.SessionRepository
+import com.lppsa.infrastructure.metrics.BusinessMetrics
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.springframework.stereotype.Service
@@ -16,6 +17,7 @@ class SendChatMessageUseCase(
     private val sessionRepository: SessionRepository,
     private val chatRepository: ChatRepository,
     private val evaluationPort: EvaluationPort,
+    private val businessMetrics: BusinessMetrics,
 ) {
     fun execute(
         sessionId: String,
@@ -34,6 +36,7 @@ class SendChatMessageUseCase(
             createdAt = LocalDateTime.now().toString(),
         )
         chatRepository.save(userMsg)
+        businessMetrics.recordChatMessage(role = MessageRole.USER.name)
 
         val sb = StringBuilder()
         evaluationPort.chat(
@@ -53,5 +56,6 @@ class SendChatMessageUseCase(
             createdAt = LocalDateTime.now().toString(),
         )
         chatRepository.save(assistantMsg)
+        businessMetrics.recordChatMessage(role = MessageRole.ASSISTANT.name)
     }
 }

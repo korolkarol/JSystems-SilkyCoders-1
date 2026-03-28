@@ -9,6 +9,8 @@ import com.lppsa.domain.model.Session
 import com.lppsa.domain.port.ChatRepository
 import com.lppsa.domain.port.EvaluationPort
 import com.lppsa.domain.port.SessionRepository
+import com.lppsa.infrastructure.metrics.BusinessMetrics
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
@@ -49,6 +51,7 @@ class SendChatMessageUseCaseTest {
             sessionRepository = sessionRepository,
             chatRepository = chatRepository,
             evaluationPort = evaluationPort,
+            businessMetrics = BusinessMetrics(SimpleMeterRegistry()),
         )
     }
 

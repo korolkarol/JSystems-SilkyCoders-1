@@ -1,6 +1,7 @@
 package com.lppsa.presentation
 
 import com.lppsa.application.usecase.SendChatMessageUseCase
+import com.lppsa.infrastructure.config.ActuatorSecurityConfig
 import com.lppsa.presentation.web.ChatController
 import kotlinx.coroutines.flow.flowOf
 import org.junit.jupiter.api.Test
@@ -9,12 +10,21 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
 
 @WebFluxTest(ChatController::class)
+@Import(ActuatorSecurityConfig::class)
+@TestPropertySource(
+    properties = [
+        "ACTUATOR_USER=test-user",
+        "ACTUATOR_PASSWORD=test-password",
+    ],
+)
 class ChatControllerTest {
 
     @Autowired
