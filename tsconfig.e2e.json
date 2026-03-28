@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "playwright/test": [
+        "node_modules/@playwright/cli/node_modules/playwright/test.js"
+      ]
+    }
+  },
+  "include": ["e2e/**/*.ts", "playwright.config.ts"]
+}

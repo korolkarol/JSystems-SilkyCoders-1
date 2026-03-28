@@ -1,0 +1,26 @@
+{
+  "name": "jsystems-silkycoders-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:e2e": "NODE_PATH=/home/karol/.nvm/versions/node/v24.14.1/lib/node_modules node /home/karol/.nvm/versions/node/v24.14.1/lib/node_modules/@playwright/cli/node_modules/playwright/cli.js test",
+    "test:e2e:list": "NODE_PATH=/home/karol/.nvm/versions/node/v24.14.1/lib/node_modules node /home/karol/.nvm/versions/node/v24.14.1/lib/node_modules/@playwright/cli/node_modules/playwright/cli.js test --list"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/korolkarol/JSystems-SilkyCoders-1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/korolkarol/JSystems-SilkyCoders-1/issues"
+  },
+  "homepage": "https://github.com/korolkarol/JSystems-SilkyCoders-1#readme"
+}
