@@ -7,9 +7,11 @@ import com.lppsa.domain.port.EvaluationPort
 import com.lppsa.domain.port.SessionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.UUID
 
+@Service
 class SendChatMessageUseCase(
     private val sessionRepository: SessionRepository,
     private val chatRepository: ChatRepository,
