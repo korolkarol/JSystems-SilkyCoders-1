@@ -1,17 +1,23 @@
 ---
 name: E2E Playwright setup
-description: How Playwright is configured and run in this project without a local npm install
+description: How Playwright Java is configured and run in this project; known bugs exposed by tests
 type: project
 ---
 
-Playwright test runner is available globally at `/home/karol/.nvm/versions/node/v24.14.1/lib/node_modules/@playwright/cli/node_modules/playwright/cli.js`. No `npm install` is possible (read-only npm cache).
+## JUnit 5 + Playwright Java E2E tests
 
-Tests resolve `playwright/test` via symlinks in `node_modules/playwright/` pointing to the global installation.
+Tests live in `src/test/kotlin/com/lppsa/e2e/`. They use `com.microsoft.playwright:playwright:1.51.0` (declared in `build.gradle.kts`).
 
-Run command: `NODE_PATH=/home/karol/.nvm/versions/node/v24.14.1/lib/node_modules node <global-playwright-cli> test`
+Run: `./gradlew test --tests "com.lppsa.e2e.*"` (requires `dangerouslyDisableSandbox: true` because Playwright downloads browsers to `~/.cache/ms-playwright`).
 
-Or via npm: `npm run test:e2e` / `npm run test:e2e:list`
+`@SpringBootTest(webEnvironment = DEFINED_PORT)` + `@LocalServerPort` — Playwright connects to the running app on the injected port.
 
-**Why:** npm cache is read-only in the sandbox; global `@playwright/cli` package is pre-installed. The sandbox also blocks writes to `/tmp/claude` (OS tmpdir), so `dangerouslyDisableSandbox: true` is needed when running the playwright test runner.
+Browser setup: `Playwright.create()` → `playwright.chromium().launch(BrowserType.LaunchOptions().setHeadless(true))`. `@BeforeAll`/`@AfterAll` on `@TestInstance(PER_CLASS)`.
 
-**How to apply:** Always use the global playwright cli path and set `NODE_PATH` when running or listing tests. New test files should import from `playwright/test` — resolved via the local symlink.
+**Known bug exposed by test:** `IntakePage.kt` file input has `name="photo"` but `IntakeController` `@RequestPart` expects `"image"`. This causes POST `/submit` to return 400 ("Zdjęcie produktu jest wymagane.") even with a file attached. Test `filling form and submitting sends POST to submit and updates decision container` will FAIL until fixed.
+
+**Playwright browser download:** First run downloads ~270 MB of browsers to `~/.cache/ms-playwright`. Sandbox must be disabled for this.
+
+**Why:** JUnit 5 + Playwright Java was chosen (not TypeScript) to stay in the Kotlin/JVM ecosystem. The bug in the file input name was intentionally tested to expose it.
+
+**How to apply:** When writing new E2E tests, always check that controller `@RequestPart` names match the HTML `name` attributes. Use `dangerouslyDisableSandbox: true` when running Gradle tests with Playwright.

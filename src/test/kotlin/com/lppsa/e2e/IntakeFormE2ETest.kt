@@ -1,17 +1,22 @@
 package com.lppsa.e2e
 
+import com.lppsa.domain.port.EvaluationPort
 import com.microsoft.playwright.Browser
 import com.microsoft.playwright.BrowserType
 import com.microsoft.playwright.Page
 import com.microsoft.playwright.Playwright
 import com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat
+import kotlinx.coroutines.flow.flowOf
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.mockito.kotlin.any
+import org.mockito.kotlin.given
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.web.server.LocalServerPort
 import java.nio.file.Files
 import java.nio.file.Path
@@ -25,17 +30,14 @@ import java.nio.file.Path
  * - Submit button enabled after valid file is selected
  * - Form can be filled and submitted (triggers POST /submit)
  *
- * Known bugs exposed by these tests:
- * 1. File input has name="photo" but IntakeController @RequestPart expects "image" — POST /submit
- *    will return 400 Bad Request ("Zdjęcie produktu jest wymagane.") even when a file is selected.
- *    The test for submission flow will fail with a 400 until this mismatch is fixed.
- *
- * Note: Full AI decision streaming tests require a real OpenRouter API key and are not covered here.
- *       Mock the EvaluationPort or use WireMock to enable full flow testing.
+ * EvaluationPort is mocked via @MockBean so no real OpenRouter API key is required.
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class IntakeFormE2ETest {
+
+    @MockBean
+    private lateinit var evaluationPort: EvaluationPort
 
     @LocalServerPort
     private var port: Int = 8080
@@ -190,14 +192,6 @@ class IntakeFormE2ETest {
         assertThat(page.locator("textarea#description")).hasValue("Zamek błyskawiczny zepsuł się po tygodniu użytkowania.")
     }
 
-    /**
-     * This test exposes BUG: file input name="photo" but controller @RequestPart("image").
-     * After selecting a valid image and submitting, the server returns 400 ("Zdjęcie produktu jest wymagane.")
-     * because it looks for the part named "image", not "photo".
-     * Fix: rename file input to name="image" in IntakePage.kt, OR rename @RequestPart to "photo".
-     *
-     * The test asserts that the decision container receives a response — it will FAIL until the bug is fixed.
-     */
     @Test
     fun `filling form and submitting sends POST to submit and updates decision container`() {
         page.navigate(baseUrl)
@@ -213,6 +207,16 @@ class IntakeFormE2ETest {
             // Wait for the submit button to be enabled by upload-preview.js
             val submitBtn = page.locator("button#submit-btn")
             assertThat(submitBtn).isEnabled()
+
+            // Configure mock before submit so evaluation doesn't hit real OpenRouter
+            given(evaluationPort.evaluate(
+                requestType = any(),
+                productName = any(),
+                purchaseDate = any(),
+                description = any(),
+                imageBytes = any(),
+                imageMimeType = any(),
+            )).willReturn(flowOf("ACCEPT ", "Wniosek ", "wstępnie ", "pozytywny."))
 
             // Intercept POST /submit to capture response status without needing real AI
             val responseRef = arrayOfNulls<com.microsoft.playwright.Response>(1)
@@ -231,11 +235,8 @@ class IntakeFormE2ETest {
             )
 
             val response = responseRef[0]!!
-            // NOTE: returns 200 only when a real OPENROUTER_API_KEY is configured.
-            // Without a valid key the AI call fails with 500 — acceptable in CI without credentials.
             assert(response.status() == 200) {
-                "Expected POST /submit to return 200 but got ${response.status()}. " +
-                    "Ensure OPENROUTER_API_KEY is set; the photo/image part name mismatch bug has been fixed."
+                "Expected POST /submit to return 200 but got ${response.status()}."
             }
 
             // After fix, decision container should contain some content from the SSE stream
