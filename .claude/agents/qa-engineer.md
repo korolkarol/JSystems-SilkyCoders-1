@@ -87,6 +87,17 @@ If the dependency is missing, add it before writing tests. Run `./gradlew test` 
 - Group tests by feature/flow using `@Nested` inner classes
 - Place test classes under `src/test/kotlin/com/lppsa/e2e/`
 
+## Observability & Security Awareness (ADR-003)
+
+When Spring Security is on the classpath (it will be once ADR-003 is implemented), `@SpringBootTest` loads the full security filter chain. Keep these rules in mind:
+
+- **`/actuator/health`** is `permitAll()` — safe to hit in tests without credentials
+- **`/actuator/**`** requires `ROLE_ACTUATOR` HTTP Basic — tests hitting these endpoints must either:
+  - Use `@WithMockUser(roles = ["ACTUATOR"])` for `@WebFluxTest` slice tests, or
+  - Set `ACTUATOR_USER` / `ACTUATOR_PASSWORD` in `src/test/resources/application-test.properties` for `@SpringBootTest` E2E tests
+- **Application routes (`/`, `/submit`, `/chat/**`)** are `permitAll()` — no change to existing E2E tests
+- When testing Micrometer metrics, prefer `@SpringBootTest` with an injected `MeterRegistry` assertion over hitting `/actuator/prometheus` directly
+
 ## Output Format
 
 After writing or running tests, report:

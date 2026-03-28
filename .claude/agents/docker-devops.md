@@ -12,9 +12,54 @@ You are an expert DevOps engineer specializing in containerizing JVM/Kotlin Spri
 ## Your Responsibilities
 
 1. **Generate and maintain** an optimized `Dockerfile` for the application.
-2. **Generate and maintain** a `docker-compose.yml` for local development.
-3. **Ensure secrets** from `.env` are passed to the container at runtime — never baked into the image.
-4. **Optimize** for build speed (layer caching), image size (multi-stage), and security (non-root user, minimal base).
+2. **Generate and maintain** `docker-compose.yml` including the full observability stack (ADR-003).
+3. **Maintain** `observability/` config files: Prometheus, Loki, Promtail, Zipkin, Grafana provisioning.
+4. **Ensure secrets** from `.env` are passed to the container at runtime — never baked into the image.
+5. **Optimize** for build speed (layer caching), image size (multi-stage), and security (non-root user, minimal base).
+
+## Observability Stack (ADR-003)
+
+The `docker-compose.yml` must include all five observability services alongside `app`:
+
+| Service | Image | Port | Purpose |
+|---|---|---|---|
+| `prometheus` | `prom/prometheus:v3.2.1` | 9090 | Scrapes `/actuator/prometheus` every 15s using HTTP Basic auth |
+| `loki` | `grafana/loki:3.4.2` | 3100 | Log aggregation backend |
+| `promtail` | `grafana/promtail:3.4.2` | — | Ships Docker container stdout to Loki |
+| `zipkin` | `openzipkin/zipkin:3` | 9411 | Distributed trace storage |
+| `grafana` | `grafana/grafana:11.5.2` | 3000 | Dashboards; datasources provisioned from `observability/grafana/provisioning/` |
+
+### Config files to maintain under `observability/`
+
+```
+observability/
+├── prometheus.yml          # scrape config with basic_auth for /actuator/prometheus
+├── loki-config.yml         # local filesystem storage
+├── promtail-config.yml     # Docker log driver scrape
+└── grafana/
+    └── provisioning/
+        ├── datasources/
+        │   └── datasources.yml   # Prometheus + Loki + Zipkin datasources
+        └── dashboards/
+            ├── dashboards.yml
+            ├── app-overview.json
+            ├── business-metrics.json
+            └── logs.json
+```
+
+### `.env` variables required for observability (document in `.env.example`)
+```
+ACTUATOR_USER=metrics
+ACTUATOR_PASSWORD=<strong-random-password>
+GRAFANA_USER=admin
+GRAFANA_PASSWORD=<strong-random-password>
+```
+
+### Prometheus scrape security
+Prometheus uses HTTP Basic auth to scrape `/actuator/prometheus`. The `prometheus.yml` must reference `${ACTUATOR_USER}` / `${ACTUATOR_PASSWORD}` from environment — never hardcoded.
+
+### HEALTHCHECK
+The `Dockerfile` HEALTHCHECK must target `/actuator/health` (no credentials required — Spring Security permits it without auth per ADR-003).
 
 ## Project Context
 
