@@ -11,6 +11,13 @@ services:
 
   prometheus:
     image: prom/prometheus:v3.2.1
+    environment:
+      - ACTUATOR_USER=${ACTUATOR_USER}
+      - ACTUATOR_PASSWORD=${ACTUATOR_PASSWORD}
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--config.expand-env=true'
     volumes:
       - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
