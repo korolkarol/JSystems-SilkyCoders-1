@@ -231,11 +231,11 @@ class IntakeFormE2ETest {
             )
 
             val response = responseRef[0]!!
-            // BUG: currently returns 400 because part name "photo" != expected "image"
-            // This assertion will fail until the bug is fixed:
+            // NOTE: returns 200 only when a real OPENROUTER_API_KEY is configured.
+            // Without a valid key the AI call fails with 500 — acceptable in CI without credentials.
             assert(response.status() == 200) {
                 "Expected POST /submit to return 200 but got ${response.status()}. " +
-                    "This is likely the photo/image part name mismatch bug."
+                    "Ensure OPENROUTER_API_KEY is set; the photo/image part name mismatch bug has been fixed."
             }
 
             // After fix, decision container should contain some content from the SSE stream

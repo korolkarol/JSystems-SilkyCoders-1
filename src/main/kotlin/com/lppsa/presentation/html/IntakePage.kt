@@ -1,9 +1,5 @@
 package com.lppsa.presentation.html
 
-import com.lppsa.presentation.html.components.Htmx.hxEncoding
-import com.lppsa.presentation.html.components.Htmx.hxPost
-import com.lppsa.presentation.html.components.Htmx.hxSwap
-import com.lppsa.presentation.html.components.Htmx.hxTarget
 import kotlinx.html.*
 
 fun renderIntakePage(): String = renderLayout(title = "Zgłoszenie reklamacji lub zwrotu") {
@@ -13,10 +9,7 @@ fun renderIntakePage(): String = renderLayout(title = "Zgłoszenie reklamacji lu
         }
 
         form(classes = "intake-form") {
-            hxPost("/submit")
-            hxEncoding("multipart/form-data")
-            hxTarget("#decision-container")
-            hxSwap("innerHTML")
+            id = "intake-form"
 
             div(classes = "intake-form__field") {
                 p(classes = "intake-form__label") {
@@ -82,7 +75,7 @@ fun renderIntakePage(): String = renderLayout(title = "Zgłoszenie reklamacji lu
                     +"Dodaj zdjęcie"
                 }
                 div(classes = "intake-form__drop-zone") {
-                    input(type = InputType.file, name = "photo", classes = "intake-form__file-input") {
+                    input(type = InputType.file, name = "image", classes = "intake-form__file-input") {
                         id = "photo"
                         accept = ".jpg,.jpeg,.png,.webp"
                     }
@@ -111,5 +104,6 @@ fun renderIntakePage(): String = renderLayout(title = "Zgłoszenie reklamacji lu
         }
 
         script(src = "/js/upload-preview.js") {}
+        script(src = "/js/intake-submit.js") {}
     }
 }

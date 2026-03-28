@@ -84,10 +84,18 @@ class IntakePageTest {
     }
 
     @Test
-    fun `renderIntakePage form has hx-post attribute`() {
+    fun `renderIntakePage form has id intake-form for JS submission`() {
         assertTrue(
-            actual = html.contains("hx-post=\"/submit\""),
-            message = "Form must have hx-post=/submit",
+            actual = html.contains("id=\"intake-form\""),
+            message = "Form must have id=intake-form so intake-submit.js can attach the submit handler",
+        )
+    }
+
+    @Test
+    fun `renderIntakePage file input uses name image to match backend RequestPart`() {
+        assertTrue(
+            actual = html.contains("name=\"image\""),
+            message = "File input must use name=image to match @RequestPart(\"image\") in IntakeController",
         )
     }
 
@@ -104,6 +112,14 @@ class IntakePageTest {
         assertTrue(
             actual = html.contains("/js/upload-preview.js"),
             message = "Must include upload-preview.js script",
+        )
+    }
+
+    @Test
+    fun `renderIntakePage includes intake-submit script`() {
+        assertTrue(
+            actual = html.contains("/js/intake-submit.js"),
+            message = "Must include intake-submit.js script",
         )
     }
 }
