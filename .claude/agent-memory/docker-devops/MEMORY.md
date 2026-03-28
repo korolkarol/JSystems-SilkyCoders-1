@@ -1,0 +1,1 @@
+- [Docker configuration facts](project_docker.md) — JAR name, SQLite volume path, health check endpoint, runtime secrets

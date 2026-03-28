@@ -1,6 +1,11 @@
 {
   "version": 1,
   "skills": {
+    "docker-expert": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "computedHash": "51defa57449d1e7a3e51ae6444c111c4424cd47ed1fb96a3eb1dba0c17971c0d"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
@@ -20,6 +25,11 @@
       "source": "github/awesome-copilot",
       "sourceType": "github",
       "computedHash": "beaa34d307bfcce5dd026e3b03c357f98f471b0de1b9fc6a0b7a64d132b74e95"
+    },
+    "multi-stage-dockerfile": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "computedHash": "698bf93a84dae18fd7bd0b1d35c21427307fde78fbdf4624be9726f5f98189ca"
     },
     "playwright-best-practices": {
       "source": "currents-dev/playwright-best-practices-skill",
