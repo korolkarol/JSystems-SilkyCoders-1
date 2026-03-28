@@ -36,6 +36,7 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 	testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+	testImplementation("com.microsoft.playwright:playwright:1.51.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

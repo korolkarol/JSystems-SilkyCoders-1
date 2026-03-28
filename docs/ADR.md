@@ -106,9 +106,12 @@ project-root/
         ├── application/
         │   ├── SubmitRequestUseCaseTest.kt
         │   └── SendChatMessageUseCaseTest.kt
-        └── infrastructure/
-            ├── JdbcSessionRepositoryTest.kt
-            └── SpringAiEvaluationAdapterTest.kt
+        ├── infrastructure/
+        │   ├── JdbcSessionRepositoryTest.kt
+        │   └── SpringAiEvaluationAdapterTest.kt
+        └── e2e/                               # E2E tests — Playwright Java + JUnit 5
+            ├── IntakeFlowE2ETest.kt
+            └── ChatFlowE2ETest.kt
 ```
 
 **Dependency rule** (enforced by convention, not build isolation):
@@ -196,6 +199,24 @@ HTMX SSE connects and appends tokens in real time:
   <!-- token chunks appended here -->
 </div>
 ```
+
+---
+
+### E2E Testing
+
+E2E tests use the **Playwright Java library** (`com.microsoft.playwright:playwright`) wired into **JUnit 5 + Spring Boot Test** — no standalone Playwright scripts or CLI commands.
+
+```kotlin
+// testImplementation in build.gradle.kts
+testImplementation("com.microsoft.playwright:playwright:1.51.0")
+```
+
+Each E2E test class:
+- Annotates with `@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)` to start the real server on port 8080
+- Manages `Playwright` / `Browser` in `@BeforeAll` / `@AfterAll` companions
+- Creates a fresh `Page` per test in `@BeforeEach`
+- Lives under `src/test/kotlin/com/lppsa/e2e/`
+- Runs as part of the standard `./gradlew test` task
 
 ---
 
