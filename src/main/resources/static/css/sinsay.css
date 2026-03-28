@@ -788,3 +788,6 @@ body {
 .timeline-item--planned::before {
     background-color: var(--color-dark-20);
 }
+
+.error-message { color: var(--color-red-50); font-size: 14px; padding: var(--size-m); border-left: 3px solid var(--color-red-50); background: #FFF5F7; }
+.text-muted { color: var(--color-dark-50); font-size: 14px; }

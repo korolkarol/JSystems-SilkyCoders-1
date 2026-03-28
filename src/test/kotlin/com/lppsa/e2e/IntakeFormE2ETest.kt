@@ -246,6 +246,47 @@ class IntakeFormE2ETest {
         }
     }
 
+    @Test
+    fun `form submission shows friendly error when AI service fails`() {
+        given(evaluationPort.evaluate(
+            requestType = any(),
+            productName = any(),
+            purchaseDate = any(),
+            description = any(),
+            imageBytes = any(),
+            imageMimeType = any(),
+        )).willThrow(RuntimeException("AI unavailable"))
+
+        page.navigate(baseUrl)
+
+        val tempImageFile = createMinimalPngTempFile()
+        try {
+            page.locator("input[name='requestType'][value='REKLAMACJA']").check()
+            page.locator("input#productName").fill("Kurtka zimowa")
+            page.locator("input#purchaseDate").fill("2025-01-15")
+            page.locator("textarea#description").fill("Zamek się zepsuł.")
+            page.locator("input#photo").setInputFiles(tempImageFile)
+            assertThat(page.locator("button#submit-btn")).isEnabled()
+
+            page.locator("button#submit-btn").click()
+
+            // Wait for error to appear in decision container
+            page.waitForSelector("#decision-container .error-message")
+
+            val errorEl = page.locator("#decision-container .error-message")
+            assertThat(errorEl).isVisible()
+            assertThat(errorEl).not().isEmpty()
+
+            // Raw JSON error must NOT be visible
+            val pageText = page.content()
+            assert(!pageText.contains("Internal Server Error")) {
+                "Raw 'Internal Server Error' JSON must not be visible to the user"
+            }
+        } finally {
+            Files.deleteIfExists(tempImageFile)
+        }
+    }
+
     /**
      * Creates a minimal valid PNG file as a temp file for upload testing.
      * 1x1 pixel transparent PNG — smallest valid PNG binary.
