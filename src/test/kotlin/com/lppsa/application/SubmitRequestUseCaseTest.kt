@@ -2,11 +2,10 @@ package com.lppsa.application
 
 import com.lppsa.application.usecase.SubmitCommand
 import com.lppsa.application.usecase.SubmitRequestUseCase
+import com.lppsa.domain.model.ChatMessage
 import com.lppsa.domain.model.Decision
-import com.lppsa.domain.model.MessageRole
 import com.lppsa.domain.model.RequestType
 import com.lppsa.domain.model.Session
-import com.lppsa.domain.port.ChatRepository
 import com.lppsa.domain.port.EvaluationPort
 import com.lppsa.domain.port.SessionRepository
 import kotlinx.coroutines.flow.Flow
@@ -146,7 +145,7 @@ class FakeEvaluationPort : EvaluationPort {
 
     override fun chat(
         session: Session,
-        history: List<com.lppsa.domain.model.ChatMessage>,
+        history: List<ChatMessage>,
         userMessage: String,
     ): Flow<String> = flowOf(*responseTokens.toTypedArray())
 }
