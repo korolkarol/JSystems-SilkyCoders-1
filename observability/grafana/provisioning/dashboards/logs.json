@@ -1,0 +1,34 @@
+{
+  "title": "Logs",
+  "uid": "logs",
+  "schemaVersion": 36,
+  "version": 1,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Application Logs",
+      "type": "logs",
+      "datasource": "Loki",
+      "targets": [
+        {
+          "expr": "{service=\"app\"}",
+          "legendFormat": ""
+        }
+      ],
+      "gridPos": {"h": 16, "w": 24, "x": 0, "y": 0}
+    },
+    {
+      "id": 2,
+      "title": "Errors Only",
+      "type": "logs",
+      "datasource": "Loki",
+      "targets": [
+        {
+          "expr": "{service=\"app\"} |= \"ERROR\"",
+          "legendFormat": ""
+        }
+      ],
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 16}
+    }
+  ]
+}

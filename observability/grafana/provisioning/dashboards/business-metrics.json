@@ -1,0 +1,51 @@
+{
+  "title": "Business Metrics",
+  "uid": "business-metrics",
+  "schemaVersion": 36,
+  "version": 1,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Session Submissions / hour",
+      "type": "timeseries",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(sinsay_session_submitted_total[1h])",
+          "legendFormat": "{{request_type}}"
+        }
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+    },
+    {
+      "id": 2,
+      "title": "ACCEPT vs REJECT",
+      "type": "timeseries",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(sinsay_session_decision_total[1h])",
+          "legendFormat": "{{outcome}} {{request_type}}"
+        }
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+    },
+    {
+      "id": 3,
+      "title": "AI Evaluation Duration P50/P95",
+      "type": "timeseries",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.5, rate(sinsay_ai_evaluation_duration_seconds_bucket[5m]))",
+          "legendFormat": "p50 {{request_type}}"
+        },
+        {
+          "expr": "histogram_quantile(0.95, rate(sinsay_ai_evaluation_duration_seconds_bucket[5m]))",
+          "legendFormat": "p95 {{request_type}}"
+        }
+      ],
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8}
+    }
+  ]
+}
