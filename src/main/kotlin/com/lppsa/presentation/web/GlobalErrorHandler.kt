@@ -12,6 +12,11 @@ import reactor.core.publisher.Mono
 @Order(-2)
 class GlobalErrorHandler : ErrorWebExceptionHandler {
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
+        // Let Spring handle ResponseStatusException (4xx) normally
+        if (ex is org.springframework.web.server.ResponseStatusException) {
+            return Mono.error(ex)
+        }
+
         val response = exchange.response
         if (response.isCommitted) {
             return Mono.error(ex)

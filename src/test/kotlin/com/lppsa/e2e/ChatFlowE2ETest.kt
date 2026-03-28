@@ -172,26 +172,18 @@ class ChatFlowE2ETest {
     }
 
     @Test
-    fun `POST chat endpoint declares text event stream content type`() {
-        // This verifies the endpoint produces SSE even when the session does not exist
-        // (the 404 is fine — what matters is the content-type negotiation works)
-        val exchangeResult = webClient.post()
+    fun `POST chat endpoint is reachable and returns a response`() {
+        // Verifies the routing is reachable; content-type assertion requires a real session.
+        val status = webClient.post()
             .uri("/chat/any-session")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-            .header(HttpHeaders.ACCEPT, MediaType.TEXT_EVENT_STREAM_VALUE)
             .bodyValue("message=test")
-            .exchangeToMono { clientResponse ->
-                // Capture content-type from the response headers
-                val contentType = clientResponse.headers().contentType().orElse(null)
-                clientResponse.bodyToMono<String>().map { contentType }
-                    .defaultIfEmpty(contentType)
-            }
-            .block()
+            .exchangeToMono { it.toBodilessEntity() }
+            .block()!!
+            .statusCode.value()
 
-        // The endpoint is declared as produces = TEXT_EVENT_STREAM_VALUE
-        // A 404 response may not carry SSE content-type, but a valid session would.
-        // This test primarily verifies the routing is reachable and does not return HTML.
-        // Full SSE content-type assertion requires a real session — see known gaps above.
+        // 404 is expected — session does not exist; what matters is it's not a 500
+        assert(status != 500) { "Expected routable response but got 500" }
     }
 
     // -------------------------------------------------------------------------
