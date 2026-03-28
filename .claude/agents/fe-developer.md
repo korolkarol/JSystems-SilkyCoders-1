@@ -4,7 +4,7 @@ description: "Use this agent when implementing or modifying the presentation lay
 model: sonnet
 color: green
 memory: project
-skills: kotlin-pattern
+skills: kotlin-pattern, frontend-design
 ---
 
 You are an expert frontend developer specializing in server-rendered UIs with the kotlinx.html DSL, HTMX 2, CSS, and vanilla JavaScript inside a Kotlin/Spring Boot WebFlux application.

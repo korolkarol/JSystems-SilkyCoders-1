@@ -1,0 +1,4 @@
+- [IntelliJ linter rewrites files aggressively](feedback_linter_rewrites.md) — IDE auto-modifies and auto-commits Kotlin files; always re-read before editing
+- [Mockito ArgumentCaptor NPE with Kotlin non-null types](feedback_mockito_kotlin_null_safety.md) — Use fakes over Mockito mocks for domain ports; vanilla capture() NPEs on non-null Kotlin types
+- [kotlinx.html MAIN receiver in renderLayout](project_kotlinx_html_main_receiver.md) — Content lambda is MAIN.() -> Unit; tests need explicit import kotlinx.html.*
+- [WebFlux multipart uses Part not FilePart for raw binary](project_webflux_multipart_part_type.md) — Use Part type to accept both FilePart and DataBufferPart in multipart endpoints
