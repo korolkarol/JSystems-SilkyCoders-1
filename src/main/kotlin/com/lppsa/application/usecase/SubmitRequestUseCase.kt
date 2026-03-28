@@ -6,6 +6,7 @@ import com.lppsa.domain.model.Session
 import com.lppsa.domain.port.EvaluationPort
 import com.lppsa.domain.port.SessionRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -46,7 +47,9 @@ class SubmitRequestUseCase(
                 description = command.description,
                 imageBytes = command.imageBytes,
                 imageMimeType = command.imageMimeType,
-            ).collect { token ->
+            ).catch { cause ->
+                emit("ERROR:${friendlyErrorMessage(cause)}")
+            }.collect { token ->
                 accumulated.append(token)
                 emit(token)
             }
@@ -65,5 +68,11 @@ class SubmitRequestUseCase(
             )
         }
         return sessionId to streamFlow
+    }
+
+    private fun friendlyErrorMessage(cause: Throwable): String = when (cause) {
+        is org.springframework.web.reactive.function.client.WebClientResponseException ->
+            "Usługa AI jest chwilowo niedostępna (${cause.statusCode.value()}). Spróbuj ponownie za chwilę."
+        else -> "Wystąpił błąd podczas przetwarzania zgłoszenia. Spróbuj ponownie."
     }
 }

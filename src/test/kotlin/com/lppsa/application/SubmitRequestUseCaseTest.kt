@@ -9,6 +9,7 @@ import com.lppsa.domain.model.Session
 import com.lppsa.domain.port.EvaluationPort
 import com.lppsa.domain.port.SessionRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
@@ -111,6 +112,16 @@ class SubmitRequestUseCaseTest {
         val savedSession = sessionRepository.savedSessions.first()
         assertEquals(RequestType.ZWROT, savedSession.requestType)
     }
+
+    @Test
+    fun `execute emits ERROR token when EvaluationPort throws`() = runTest {
+        evaluationPort.throwOnEvaluate = RuntimeException("AI unavailable")
+
+        val (_, flow) = useCase.execute(defaultCommand)
+        val emitted = flow.toList()
+
+        assertTrue(emitted.any { it.startsWith("ERROR:") })
+    }
 }
 
 class FakeSessionRepository : SessionRepository {
@@ -133,6 +144,7 @@ class FakeSessionRepository : SessionRepository {
 
 class FakeEvaluationPort : EvaluationPort {
     var responseTokens: List<String> = emptyList()
+    var throwOnEvaluate: Throwable? = null
 
     override fun evaluate(
         requestType: RequestType,
@@ -141,7 +153,9 @@ class FakeEvaluationPort : EvaluationPort {
         description: String,
         imageBytes: ByteArray,
         imageMimeType: String,
-    ): Flow<String> = flowOf(*responseTokens.toTypedArray())
+    ): Flow<String> = throwOnEvaluate?.let { ex ->
+        flow { throw ex }
+    } ?: flowOf(*responseTokens.toTypedArray())
 
     override fun chat(
         session: Session,
