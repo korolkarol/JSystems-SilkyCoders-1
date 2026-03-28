@@ -14,12 +14,10 @@ services:
     environment:
       - ACTUATOR_USER=${ACTUATOR_USER}
       - ACTUATOR_PASSWORD=${ACTUATOR_PASSWORD}
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--config.expand-env=true'
+    entrypoint: ["/bin/sh", "/etc/prometheus/entrypoint.sh"]
     volumes:
-      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus-template.yml:ro
+      - ./observability/prometheus-entrypoint.sh:/etc/prometheus/entrypoint.sh:ro
       - prometheus_data:/prometheus
     ports:
       - "9090:9090"
